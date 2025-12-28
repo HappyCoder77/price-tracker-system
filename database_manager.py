@@ -27,7 +27,7 @@ def init_db() -> None:
             name TEXT UNIQUE NOT NULL,
             current_price REAL,
             last_price REAL,
-            last_update DATETIME
+            last_updated DATETIME
         )
         """
     )
