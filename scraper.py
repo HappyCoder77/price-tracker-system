@@ -21,12 +21,26 @@ def scrape_books(url: str) -> None:
 
         print(f"Found {len(books)} books. Updating database...")
 
-        for book in tqdm(books, desc="Processings books"):
-            title: str = book.h3.a["title"]
-            raw_price_str: str = book.find("p", class_="price_color").text
+        for book in tqdm(books, desc="Processing books"):
+            h3_tag = book.find("h3")
+
+            if h3_tag and h3_tag.a:
+                title_attr = h3_tag.a.get("title")
+                title = str(title_attr) if title_attr else "Unknown Title"
+            else:
+                title = "Unknown Title"
+
+            price_tag = book.find("p", class_="price_color")
+
+            if price_tag:
+                # Now mypy knows price_tag is not None
+                price_str = price_tag.text
+            else:
+                price_str = "£0.00"
             clean_price_str: str = "".join(
-                char for char in raw_price_str if char.isdigit() or char == "."
+                char for char in price_str if char.isdigit() or char == "."
             )
+
             price: float = float(clean_price_str)
 
             update_product_price(name=title, price=price)
