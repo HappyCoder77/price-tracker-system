@@ -44,6 +44,27 @@ To simulate a price drop for testing:
 python3 simulate_drop.py
 ```
 
+## 🛠️ Technical Details: Database Schema
+
+The system uses **SQLite** for lightweight, serverless data storage. The core logic relies on a single table that tracks price changes between scraping sessions.
+
+### Table: `products`
+
+| Column          | Type      | Description                                                                   |
+| :-------------- | :-------- | :---------------------------------------------------------------------------- |
+| `name`          | TEXT (PK) | Unique name of the book [cite: 2025-12-28].                                   |
+| `current_price` | REAL      | The most recently scraped price [cite: 2025-12-28].                           |
+| `last_price`    | REAL      | The price from the previous session (used for comparison) [cite: 2025-12-28]. |
+
+### Price Detection Logic
+
+When the scraper runs, the system follows these steps:
+
+1. It checks if the book already exists in the database.
+2. If it exists, it moves the value from `current_price` to `last_price`.
+3. It updates `current_price` with the newly scraped value.
+4. An alert is triggered only if `current_price < last_price`.
+
 ## 🔮 Future Improvements
 
 - **Email Notifications**: Integrate `smtplib` to send automated emails when a deal is found.
