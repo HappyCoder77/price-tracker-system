@@ -1,3 +1,8 @@
+# Local virtual environment
 price-tracker-env/
-__pycache__
+
+# Python bytecode cache
+__pycache__/
+
+# SQLite database files
 *.db
