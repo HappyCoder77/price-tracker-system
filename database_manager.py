@@ -1,15 +1,23 @@
+import os
 import sqlite3
 from sqlite3 import Connection
 from datetime import datetime
 from typing import Optional
 
+# Use environment variables for the database path, defaulting to local
+# This makes the app "Cloud-ready"
+DB_PATH = os.getenv("DATABSE_URL", "books_tracker.db")
+
 
 def get_connection() -> Connection:
     """
-    Creates and returns a connection to the SQLite database.
+    stablishes a connection to the SQLite database using an environment-aware path.
     """
-
-    return sqlite3.connect("tracker.db")
+    try:
+        return sqlite3.connect(DB_PATH)
+    except sqlite3.Error as e:
+        print(f"Databasse connection error: {e}")
+        raise
 
 
 def init_db() -> None:
