@@ -8,6 +8,15 @@ A professional Python-based web scraper that monitors book prices, stores them i
 - **Historical Tracking**: Stores price history to detect real discounts.
 - **Instant Alerts**: Visual terminal alerts with price drop calculations.
 - **CSV Export**: Automatically records all deals in `detected_deals.csv` with timestamps.
+- **Type Safety**: 100% static type checking coverage with mypy.
+- **Enhanced UX**: Real-time visual progress monitoring via tqdm.
+
+## 🛠️ Tech Stack
+
+- **Language**: Python 3.x
+- **Libraries**: Requests, BeautifulSoup4, tqdm
+- **Dev Tools**: Mypy (Type Checking), Flake8 (Linting)
+- **Workflow**: Git Flow with atomic, feature-based commits.
 
 ## 🛠️ Installation
 
@@ -42,6 +51,14 @@ To simulate a price drop for testing:
 
 ```bash
 python3 simulate_drop.py
+```
+
+## 🛡️ Quality Assurance
+
+Run type checking to ensure code integrity:
+
+```bash
+mypy .
 ```
 
 ## 🛠️ Technical Details: Database Schema
