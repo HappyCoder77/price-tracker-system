@@ -2,8 +2,10 @@ import os
 import sqlite3
 from sqlite3 import Connection
 from datetime import datetime
-from typing import Optional
+from dotenv import load_dotenv
 
+
+load_dotenv()
 # Use environment variables for the database path, defaulting to local
 # This makes the app "Cloud-ready"
 DB_PATH = os.getenv("DATABSE_URL", "books_tracker.db")

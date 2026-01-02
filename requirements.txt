@@ -6,6 +6,7 @@ librt==0.7.5
 mypy==1.19.1
 mypy_extensions==1.1.0
 pathspec==0.12.1
+python-dotenv==1.2.1
 requests==2.32.5
 soupsieve==2.8.1
 tqdm==4.67.1
