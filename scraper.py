@@ -33,7 +33,7 @@ def scrape_books(url: str) -> None:
 
             if h3_tag and h3_tag.a:
                 title_attr = h3_tag.a.get("title")
-                title = str(title_attr) if title_attr else "Unknown Title"
+                title = str(title_attr).strip() if title_attr else "Unknown Title"
             else:
                 title = "Unknown Title"
 

@@ -27,4 +27,4 @@ def simulate_price_drop(product_name: str, new_price: float) -> None:
 
 if __name__ == "__main__":
     # Example: simulate a drop for a Romance book
-    simulate_price_drop("Perfect", 9.99)
+    simulate_price_drop("the", 9.99)
