@@ -1,14 +1,18 @@
 import os
+import logging
+from logger_config import setup_logging
 import sqlite3
 from sqlite3 import Connection
 from datetime import datetime
 from dotenv import load_dotenv
 
 
+setup_logging()
+
 load_dotenv()
 # Use environment variables for the database path, defaulting to local
 # This makes the app "Cloud-ready"
-DB_PATH = os.getenv("DATABSE_URL", "books_tracker.db")
+DB_PATH = os.getenv("DATABASE_URL", "books_tracker.db")
 
 
 def get_connection() -> Connection:
@@ -18,7 +22,7 @@ def get_connection() -> Connection:
     try:
         return sqlite3.connect(DB_PATH)
     except sqlite3.Error as e:
-        print(f"Databasse connection error: {e}")
+        logging.error(f"Databasse connection error: {e}")
         raise
 
 
@@ -44,7 +48,7 @@ def init_db() -> None:
 
     conn.commit()
     conn.close()
-    print("Database initialized successfully!")
+    logging.info("Database initialized successfully!")
 
 
 def update_product_price(name: str, price: float) -> None:
@@ -69,11 +73,12 @@ def update_product_price(name: str, price: float) -> None:
         if old_price != price:
             cursor.execute(
                 """UPDATE products 
-                SET last_price = ?, current_price = ?, last_udpated WHERE name = ?""",
+                SET last_price = ?, current_price = ?, last_updated = ?
+                WHERE name = ?""",
                 (old_price, price, now, name),
             )
 
-            print(f"Update: {name} changed from {old_price} to {price}")
+            logging.info(f"Update: {name} changed from {old_price} to {price}")
     else:
         cursor.execute(
             """
@@ -84,7 +89,7 @@ def update_product_price(name: str, price: float) -> None:
             (name, price, None, now),
         )
 
-        print(f"New product added: {name} at {price}")
+        logging.info(f"New product added: {name} at {price}")
 
     conn.commit()
     conn.close()

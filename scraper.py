@@ -1,8 +1,13 @@
+import sys
 import requests
+import logging
+from logger_config import setup_logging
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from database_manager import update_product_price, init_db
-from typing import List, Dict, Any
+
+
+setup_logging()
 
 
 def scrape_books(url: str) -> None:
@@ -19,9 +24,11 @@ def scrape_books(url: str) -> None:
         soup = BeautifulSoup(response.text, "html.parser")
         books = soup.find_all("article", class_="product_pod")
 
-        print(f"Found {len(books)} books. Updating database...")
+        logging.info(f"Found {len(books)} books. Updating database...")
 
-        for book in tqdm(books, desc="Processing books"):
+        is_tty = sys.stdout.isatty()
+
+        for book in tqdm(books, desc="Processing books", disable=not is_tty):
             h3_tag = book.find("h3")
 
             if h3_tag and h3_tag.a:
@@ -46,7 +53,7 @@ def scrape_books(url: str) -> None:
             update_product_price(name=title, price=price)
 
     except Exception as e:
-        print(f"Error during scraping. {e}")
+        logging.error(f"Error during scraping. {e}")
 
 
 if __name__ == "__main__":
