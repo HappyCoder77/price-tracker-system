@@ -1,16 +1,38 @@
 import os
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security.api_key import APIKeyHeader
-from database_manager import get_connection
+from database_manager import get_connection, init_db
+from contextlib import asynccontextmanager
 import logging
 
 API_KEY = os.getenv("API_KEY", "default_secret_if_not_set")
 API_KEY_NAME = "X-API-KEY"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Handle startup and shutdown events.
+    This replaces the deprecated @app.on_event.
+    """
+
+    try:
+        init_db()
+        logging.info("Database initialized successfully via lifespan.")
+    except Exception as e:
+        logging.error(f"Critical error during database initialization: {e}")
+
+    yield
+
+    logging.info("Shutting down API...")
+
+
 app = FastAPI(
     title="Price Tracker API",
     description="Professional API to monitor book prices and deals",
     version="1.2.0",
+    lifespan=lifespan,
 )
 
 
@@ -79,3 +101,12 @@ def get_deals(api_key: str = Depends(get_api_key)):
     except Exception as e:
         logging.error(f"Error fetching deals: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/debug-seed")
+def seed_database(api_key: str = Depends(get_api_key)):
+    """Manually adds a test product to verify DB writing permissions."""
+    from database_manager import update_product_price
+
+    update_product_price("Test book", 19.99)
+    return {"message": "Test product added successfully"}
