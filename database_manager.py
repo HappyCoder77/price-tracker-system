@@ -12,8 +12,16 @@ setup_logging()
 load_dotenv()
 # Use environment variables for the database path, defaulting to local
 # This makes the app "Cloud-ready"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.getenv("DATABASE_URL", os.path.join(BASE_DIR, "books_tracker.db"))
+
+IS_RAILWAY = os.getenv("RAILWAY_ENVIRONMENT_NAME") is not None
+
+if IS_RAILWAY:
+    DB_PATH = "/tmp/books_tracker.db"
+    logging.info(f"Cloud environment detected. DB Path: {DB_PATH}")
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    DB_PATH = os.getenv("DATABASE_URL", os.path.join(BASE_DIR, "books_tracker.db"))
+    logging.info(f"Local environment detected. DB Path: {DB_PATH}")
 
 
 def get_connection() -> Connection:
