@@ -15,7 +15,10 @@ load_dotenv()
 
 IS_RAILWAY = os.getenv("RAILWAY_ENVIRONMENT_NAME") is not None
 
-if IS_RAILWAY:
+if os.path.exists("/data"):
+    DB_PATH = "/data/books_tracker.db"
+    logging.info(f"Volume detected at: {DB_PATH}")
+elif os.getenv("RAILWAY_ENVIRONMENT_NAME"):
     DB_PATH = "/tmp/books_tracker.db"
     logging.info(f"Cloud environment detected. DB Path: {DB_PATH}")
 else:
