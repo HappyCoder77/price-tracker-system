@@ -1,13 +1,29 @@
-from fastapi import FastAPI, HTTPException
+import os
+from fastapi import FastAPI, HTTPException, Security, Depends
+from fastapi.security.api_key import APIKeyHeader
 from database_manager import get_connection
 import logging
 
-
+API_KEY = os.getenv("API_KEY", "default_secret_if_not_set")
+API_KEY_NAME = "X-API-KEY"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 app = FastAPI(
     title="Price Tracker API",
     description="Professional API to monitor book prices and deals",
-    version="1.0.0",
+    version="1.2.0",
 )
+
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    """Validates the API Key provided in the request headers."""
+
+    if api_key_header == API_KEY:
+        return api_key_header
+    else:
+        logging.warning("Unauthorized access attempt blocked")
+        raise HTTPException(
+            status_code=403, detail="Could not validate credentials. Invalid API Key."
+        )
 
 
 @app.get("/")
@@ -21,7 +37,7 @@ def read_root():
 
 
 @app.get("/products")
-def get_all_products():
+def get_all_products(api_key: str = Depends(get_api_key)):
     """Returns every book being tracked."""
 
     try:
@@ -42,7 +58,7 @@ def get_all_products():
 
 
 @app.get("/deals")
-def get_deals():
+def get_deals(api_key: str = Depends(get_api_key)):
     """
     Returns only the books where the current price is lower than the previous one,
     indicating a real discount.
