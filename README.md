@@ -4,27 +4,27 @@ A professional Python-based API and web scraper that monitors book prices, store
 
 ## ✨ Features
 
-- **Automated Internal Scheduler**: Background worker that executes the scraper every 6 hours using the `schedule` library [cite: 2026-01-03].
-- **RESTful API**: Built with **FastAPI** to expose real-time product data and price trends [cite: 2026-01-02].
-- **Cloud Persistent Storage**: Integrated with **Railway Volumes** for durable SQLite data storage [cite: 2026-01-03].
+- **Automated Internal Scheduler**: Background worker that executes the scraper every 6 hours using the `schedule` library.
+- **RESTful API**: Built with **FastAPI** to expose real-time product data and price trends.
+- **Cloud Persistent Storage**: Integrated with **Railway Volumes** for durable SQLite data storage.
 - **Historical Tracking**: Stores price history to detect discounts and market changes.
-- **Security**: Protected endpoints via **X-API-KEY** header authentication [cite: 2026-01-02].
-- **Reliable Architecture**: Monolithic design ensuring the scraper and API share the same database state seamlessly [cite: 2026-01-03].
+- **Security**: Protected endpoints via **X-API-KEY** header authentication.
+- **Reliable Architecture**: Monolithic design ensuring the scraper and API share the same database state seamlessly.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: FastAPI (Asynchronous API) [cite: 2026-01-02].
-- **Server**: Uvicorn (ASGI) [cite: 2026-01-02].
+- **Framework**: FastAPI (Asynchronous API).
+- **Server**: Uvicorn (ASGI).
 - **Scraper**: Requests & BeautifulSoup4.
-- **Database**: SQLite with Persistent Volumes [cite: 2026-01-03].
-- **Automation**: Internal Python `threading` & `schedule` library [cite: 2026-01-03].
+- **Database**: SQLite with Persistent Volumes.
+- **Automation**: Internal Python `threading` & `schedule` library.
 
 ## 🏗️ Cloud Infrastructure (Railway)
 
 The system is designed to run in a cloud container with the following mount configuration:
 
-- **Mount Path**: `/data` [cite: 2026-01-03].
-- **DB Location**: `/data/books_tracker.db` (Persistent) [cite: 2026-01-03].
+- **Mount Path**: `/data`.
+- **DB Location**: `/data/books_tracker.db` (Persistent) .
 
 ## 🛠️ Installation & Setup
 
@@ -67,9 +67,9 @@ API Endpoints
 
 - **GET** `/`: Welcome message and status.
 
-- **GET** `/products`: Retrieve all tracked books (Requires X-API-KEY) [cite: 2026-01-02].
+- **GET** `/products`: Retrieve all tracked books (Requires X-API-KEY).
 
-- **GET** `/docs`: Interactive Swagger UI documentation [cite: 2026-01-02].
+- **GET** `/docs`: Interactive Swagger UI documentation.
 
 ## 🛡️ Quality Assurance
 
@@ -82,11 +82,11 @@ The system uses **SQLite** for lightweight, serverless data storage. The core lo
 
 ### Table: `products`
 
-| Column          | Type      | Description                                                                   |
-| :-------------- | :-------- | :---------------------------------------------------------------------------- |
-| `name`          | TEXT (PK) | Unique name of the book [cite: 2025-12-28].                                   |
-| `current_price` | REAL      | The most recently scraped price [cite: 2025-12-28].                           |
-| `last_price`    | REAL      | The price from the previous session (used for comparison) [cite: 2025-12-28]. |
+| Column          | Type      | Description                                                |
+| :-------------- | :-------- | :--------------------------------------------------------- |
+| `name`          | TEXT (PK) | Unique name of the book.                                   |
+| `current_price` | REAL      | The most recently scraped price.                           |
+| `last_price`    | REAL      | The price from the previous session (used for comparison). |
 
 ### Price Detection Logic
 
