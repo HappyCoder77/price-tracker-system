@@ -1,24 +1,32 @@
 # 🚀 Price Tracker System
 
-A professional Python-based web scraper that monitors book prices, stores them in a SQLite database, and alerts you when prices drop.
+A professional Python-based API and web scraper that monitors book prices, stores them in a persistent SQLite database, and provides a RESTful interface for data access.
 
 ## ✨ Features
 
-- **Automated Scraping**: Fetches the latest prices from "Books to Scrape".
-- **Historical Tracking**: Stores price history to detect real discounts.
-- **Instant Alerts**: Visual terminal alerts with price drop calculations.
-- **CSV Export**: Automatically records all deals in `detected_deals.csv` with timestamps.
-- **Type Safety**: 100% static type checking coverage with mypy.
-- **Enhanced UX**: Real-time visual progress monitoring via tqdm.
+- **Automated Internal Scheduler**: Background worker that executes the scraper every 6 hours using the `schedule` library [cite: 2026-01-03].
+- **RESTful API**: Built with **FastAPI** to expose real-time product data and price trends [cite: 2026-01-02].
+- **Cloud Persistent Storage**: Integrated with **Railway Volumes** for durable SQLite data storage [cite: 2026-01-03].
+- **Historical Tracking**: Stores price history to detect discounts and market changes.
+- **Security**: Protected endpoints via **X-API-KEY** header authentication [cite: 2026-01-02].
+- **Reliable Architecture**: Monolithic design ensuring the scraper and API share the same database state seamlessly [cite: 2026-01-03].
 
 ## 🛠️ Tech Stack
 
-- **Language**: Python 3.x
-- **Libraries**: Requests, BeautifulSoup4, tqdm
-- **Dev Tools**: Mypy (Type Checking), Flake8 (Linting)
-- **Workflow**: Git Flow with atomic, feature-based commits.
+- **Framework**: FastAPI (Asynchronous API) [cite: 2026-01-02].
+- **Server**: Uvicorn (ASGI) [cite: 2026-01-02].
+- **Scraper**: Requests & BeautifulSoup4.
+- **Database**: SQLite with Persistent Volumes [cite: 2026-01-03].
+- **Automation**: Internal Python `threading` & `schedule` library [cite: 2026-01-03].
 
-## 🛠️ Installation
+## 🏗️ Cloud Infrastructure (Railway)
+
+The system is designed to run in a cloud container with the following mount configuration:
+
+- **Mount Path**: `/data` [cite: 2026-01-03].
+- **DB Location**: `/data/books_tracker.db` (Persistent) [cite: 2026-01-03].
+
+## 🛠️ Installation & Setup
 
 1. Clone the repository:
 
@@ -39,27 +47,34 @@ A professional Python-based web scraper that monitors book prices, stores them i
    pip install -r requirements.txt
    ```
 
+4. Environment Variables: Create a .env file (or set in Railway, except DEBUG):
+
+   ```text
+   DEBUG=True
+   DATABASE_URL=books_tracker.db
+   API_KEY=your_secure_key_here
+   ```
+
 ## 🚀 Usage
 
-Run the main orchestrator to start tracking:
+Local development
 
 ```bash
-python3 main.py
+uvicorn api:app --reload
 ```
 
-To simulate a price drop for testing:
+API Endpoints
 
-```bash
-python3 simulate_drop.py
-```
+- **GET** `/`: Welcome message and status.
+
+- **GET** `/products`: Retrieve all tracked books (Requires X-API-KEY) [cite: 2026-01-02].
+
+- **GET** `/docs`: Interactive Swagger UI documentation [cite: 2026-01-02].
 
 ## 🛡️ Quality Assurance
 
-Run type checking to ensure code integrity:
-
-```bash
-mypy .
-```
+- **Type Safety**: 100% coverage with `mypy`.
+- **Git Workflow**: Branch-based development (`feature/*`) before merging to `main`.
 
 ## 🛠️ Technical Details: Database Schema
 
@@ -87,4 +102,3 @@ When the scraper runs, the system follows these steps:
 - **Email Notifications**: Integrate `smtplib` to send automated emails when a deal is found.
 - **Web Dashboard**: Create a simple UI using **Streamlit** or **Flask** to visualize price trends.
 - **Multi-Category Support**: Expand the scraper to monitor different genres or even other websites.
-- **Scheduled Execution**: Set up a `cron` job or use the `schedule` library to run the tracker every 24 hours.
