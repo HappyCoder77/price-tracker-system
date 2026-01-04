@@ -1,8 +1,12 @@
 import os
+import schedule
+import threading
+import time
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security.api_key import APIKeyHeader
 from database_manager import get_connection, init_db
 from contextlib import asynccontextmanager
+from scraper import scrape_books
 import logging
 
 API_KEY = os.getenv("API_KEY", "default_secret_if_not_set")
@@ -10,16 +14,35 @@ API_KEY_NAME = "X-API-KEY"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 
+def run_scheduler():
+    """
+    Background task to run the scraper periodically.
+    """
+
+    scrape_books()
+
+    schedule.every(6).hours.do(scrape_books)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Handle startup and shutdown events.
     This replaces the deprecated @app.on_event.
+    Includes the background scraper scheduler
     """
 
     try:
         init_db()
         logging.info("Database initialized successfully via lifespan.")
+
+        scraper_thread = threading.Thread(target=run_scheduler, daemon=True)
+        scraper_thread.start
+        logging.info("Background scraper thread started.")
     except Exception as e:
         logging.error(f"Critical error during database initialization: {e}")
 
